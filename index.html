@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>Sakura Work Center</title>
+  <style>
+    :root {
+      --ink: #202327;
+      --muted: #5e6670;
+      --glass: rgba(246, 247, 248, 0.84);
+      --line: rgba(34, 38, 43, 0.14);
+      --shadow: 0 28px 60px rgba(0, 0, 0, 0.28);
+      --planner: #0057d8;
+      --mail: #0f6cbd;
+      --teams: #5f52dd;
+      --calendar: #167c80;
+      --industry: #53723f;
+      --moveout: #0e8f73;
+      --payslip: #b96a34;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", "Noto Sans Thai", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.24)),
+        url("assets/sakura-work-center-bg.svg") center/cover fixed no-repeat;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .shell {
+      position: relative;
+      width: min(1180px, 100%);
+      background: var(--glass);
+      border: 1px solid rgba(255,255,255,0.65);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      overflow: hidden;
+    }
+
+    .hero {
+      display: grid;
+      gap: 18px;
+      padding: 26px 136px 22px 30px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero-main {
+      display: grid;
+      gap: 10px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .cat-corner {
+      position: absolute;
+      top: 22px;
+      right: 28px;
+      width: 78px;
+      height: 78px;
+      padding: 8px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.68);
+      box-shadow: 0 16px 34px rgba(0,0,0,0.13);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      color: #535b64;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 3.4vw, 3.25rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .subhead {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .tool-button {
+      min-height: 38px;
+      padding: 8px 13px;
+      border: 1px solid rgba(34,38,43,0.14);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.76);
+      color: #26313c;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+
+    .tool-button:hover,
+    .tool-button.is-active {
+      border-color: rgba(0,87,216,0.34);
+      background: rgba(255,255,255,0.92);
+    }
+
+    .tool-button.danger:hover {
+      border-color: rgba(185,106,52,0.44);
+    }
+
+    .status-text {
+      min-height: 22px;
+      color: #53606d;
+      font-size: 0.9rem;
+    }
+
+    .categories {
+      display: grid;
+      gap: 0;
+      padding: 8px 24px 24px;
+    }
+
+    .category {
+      border-top: 1px solid var(--line);
+    }
+
+    .category:first-child {
+      border-top: 0;
+    }
+
+    .category summary {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 58px;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+
+    .category summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .category summary::after {
+      content: "";
+      width: 10px;
+      height: 10px;
+      margin-left: auto;
+      border-right: 2px solid #636b74;
+      border-bottom: 2px solid #636b74;
+      transform: rotate(45deg) translateY(-2px);
+      transition: transform 160ms ease;
+    }
+
+    .category[open] summary::after {
+      transform: rotate(-135deg) translateY(-2px);
+    }
+
+    .category-kicker {
+      width: 10px;
+      height: 34px;
+      border-radius: 999px;
+      background: var(--category-accent);
+    }
+
+    .category-title {
+      margin: 0;
+      font-size: 1.08rem;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .category-count {
+      color: #68717b;
+      font-size: 0.9rem;
+    }
+
+    .shortcut-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      padding: 0 0 18px 22px;
+    }
+
+    .shortcut {
+      min-height: 88px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 14px;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(34,38,43,0.1);
+      border-radius: 16px;
+      text-align: left;
+      color: inherit;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.07);
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .shortcut:hover {
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, var(--accent) 35%, rgba(34,38,43,0.16));
+      box-shadow: 0 16px 30px rgba(0,0,0,0.12);
+    }
+
+    .shortcut.is-empty {
+      background: rgba(255,255,255,0.58);
+      border-style: dashed;
+    }
+
+    .shortcut.is-editing {
+      outline: 2px solid color-mix(in srgb, var(--accent) 42%, transparent);
+      outline-offset: 2px;
+    }
+
+    .shortcut-icon {
+      flex: 0 0 auto;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: color-mix(in srgb, var(--accent) 16%, white);
+    }
+
+    .shortcut-icon img {
+      width: 34px;
+      height: 34px;
+    }
+
+    .shortcut-text {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+    }
+
+    .shortcut h2 {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .shortcut p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.25;
+    }
+
+    .shortcut-state {
+      width: fit-content;
+      margin-top: 5px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(34,38,43,0.08);
+      color: #52606c;
+      font-size: 0.74rem;
+      line-height: 1.15;
+    }
+
+    .shortcut:not(.is-empty) .shortcut-state {
+      background: color-mix(in srgb, var(--accent) 14%, white);
+      color: #2c3b48;
+    }
+
+    .planner { --accent: var(--planner); }
+    .email { --accent: var(--mail); }
+    .teams { --accent: var(--teams); }
+    .calendar { --accent: var(--calendar); }
+    .industry { --accent: var(--industry); }
+    .moveout { --accent: var(--moveout); }
+    .payslip { --accent: var(--payslip); }
+
+    .office { --category-accent: #4b73d9; }
+    .waste { --category-accent: #0e8f73; }
+    .hr { --category-accent: #b96a34; }
+
+    .editor {
+      width: min(560px, calc(100vw - 32px));
+      padding: 0;
+      border: 1px solid rgba(34,38,43,0.16);
+      border-radius: 18px;
+      background: rgba(250,251,252,0.98);
+      color: var(--ink);
+      box-shadow: 0 28px 70px rgba(0,0,0,0.32);
+    }
+
+    .editor::backdrop {
+      background: rgba(12,15,18,0.36);
+      backdrop-filter: blur(4px);
+    }
+
+    .editor-form {
+      display: grid;
+      gap: 16px;
+      padding: 22px;
+    }
+
+    .editor-title {
+      margin: 0;
+      font-size: 1.25rem;
+      line-height: 1.2;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field span {
+      color: #4c5661;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .field input {
+      min-height: 42px;
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid rgba(34,38,43,0.18);
+      border-radius: 12px;
+      background: white;
+      color: var(--ink);
+    }
+
+    .field input:focus {
+      outline: 2px solid rgba(0,87,216,0.22);
+      border-color: rgba(0,87,216,0.42);
+    }
+
+    .editor-actions {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 4px;
+    }
+
+    .file-input {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @media (max-width: 980px) {
+      .shortcut-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      body {
+        padding: 14px;
+      }
+
+      .hero {
+        padding: 22px 88px 18px 20px;
+      }
+
+      .hero-actions {
+        gap: 8px;
+      }
+
+      .tool-button {
+        flex: 1 1 auto;
+      }
+
+      .cat-corner {
+        top: 18px;
+        right: 18px;
+        width: 62px;
+        height: 62px;
+        padding: 6px;
+        border-radius: 18px;
+      }
+
+      .categories {
+        padding: 4px 14px 16px;
+      }
+
+      .shortcut-grid {
+        grid-template-columns: 1fr;
+        padding-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <img class="cat-corner" src="assets/tuxedo-cat-icon.svg" alt="Tuxedo cat icon">
+    <section class="hero">
+      <div class="hero-main">
+        <div class="eyebrow">Sakura Job Workspace</div>
+        <h1>Sakura Work Center</h1>
+        <p class="subhead">Sakura daily workspace</p>
+      </div>
+      <div class="hero-actions" aria-label="Dashboard controls">
+        <button class="tool-button" type="button" id="editToggle">Edit</button>
+        <button class="tool-button" type="button" id="exportConfig">Export</button>
+        <button class="tool-button" type="button" id="importConfig">Import</button>
+        <input class="file-input" type="file" id="configFile" accept="application/json,.json">
+        <span class="status-text" id="statusText" role="status" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <section class="categories" id="categories" aria-label="Work center categories"></section>
+  </main>
+
+  <dialog class="editor" id="shortcutDialog">
+    <form class="editor-form" method="dialog" id="shortcutForm">
+      <h2 class="editor-title" id="dialogTitle">Shortcut</h2>
+      <label class="field">
+        <span>Name</span>
+        <input id="shortcutTitle" name="title" autocomplete="off" required>
+      </label>
+      <label class="field">
+        <span>Subtitle</span>
+        <input id="shortcutDescription" name="description" autocomplete="off">
+      </label>
+      <label class="field">
+        <span>URL</span>
+        <input id="shortcutUrl" name="url" type="url" inputmode="url" autocomplete="off" placeholder="https://">
+      </label>
+      <div class="editor-actions">
+        <button class="tool-button danger" type="button" id="clearShortcut">Clear URL</button>
+        <button class="tool-button" value="cancel" formnovalidate>Cancel</button>
+        <button class="tool-button is-active" value="save">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    const STORAGE_KEY = "sakuraWorkCenter.shortcuts.v1";
+
+    const categories = [
+      { id: "office", title: "Office Center", className: "office" },
+      { id: "waste", title: "Waste Relate", className: "waste" },
+      { id: "hr", title: "HR Center", className: "hr" }
+    ];
+
+    const defaults = [
+      {
+        id: "planner",
+        category: "office",
+        title: "Planner",
+        description: "Sakura tasks",
+        icon: "assets/planner-icon.svg",
+        className: "planner",
+        url: ""
+      },
+      {
+        id: "email",
+        category: "office",
+        title: "Email",
+        description: "Inbox",
+        icon: "assets/outlook-icon.svg",
+        className: "email",
+        url: ""
+      },
+      {
+        id: "calendar",
+        category: "office",
+        title: "Calendar",
+        description: "Month view",
+        icon: "assets/calendar-icon.svg",
+        className: "calendar",
+        url: ""
+      },
+      {
+        id: "teams",
+        category: "office",
+        title: "MS Team",
+        description: "Chat and meeting",
+        icon: "assets/teams-icon.svg",
+        className: "teams",
+        url: ""
+      },
+      {
+        id: "waste-moveout",
+        category: "waste",
+        title: "Waste Movement KoOr2",
+        description: "DIW moveout",
+        icon: "assets/waste-moveout-icon.svg",
+        className: "moveout",
+        url: ""
+      },
+      {
+        id: "waste-industry",
+        category: "waste",
+        title: "Waste i-Industry",
+        description: "Industry portal",
+        icon: "assets/industry-icon.svg",
+        className: "industry",
+        url: ""
+      },
+      {
+        id: "payslip",
+        category: "hr",
+        title: "Payslip",
+        description: "Sakura payroll",
+        icon: "assets/payslip-icon.svg",
+        className: "payslip",
+        url: ""
+      }
+    ];
+
+    const state = {
+      editMode: false,
+      activeId: "",
+      shortcuts: loadShortcuts()
+    };
+
+    const categoriesElement = document.querySelector("#categories");
+    const editToggle = document.querySelector("#editToggle");
+    const exportConfig = document.querySelector("#exportConfig");
+    const importConfig = document.querySelector("#importConfig");
+    const configFile = document.querySelector("#configFile");
+    const statusText = document.querySelector("#statusText");
+    const dialog = document.querySelector("#shortcutDialog");
+    const form = document.querySelector("#shortcutForm");
+    const dialogTitle = document.querySelector("#dialogTitle");
+    const shortcutTitle = document.querySelector("#shortcutTitle");
+    const shortcutDescription = document.querySelector("#shortcutDescription");
+    const shortcutUrl = document.querySelector("#shortcutUrl");
+    const clearShortcut = document.querySelector("#clearShortcut");
+
+    render();
+
+    editToggle.addEventListener("click", () => {
+      state.editMode = !state.editMode;
+      editToggle.classList.toggle("is-active", state.editMode);
+      editToggle.textContent = state.editMode ? "Done" : "Edit";
+      setStatus(state.editMode ? "Edit mode" : "");
+      render();
+    });
+
+    exportConfig.addEventListener("click", () => {
+      const payload = {
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        shortcuts: state.shortcuts.map(({ id, title, description, url }) => ({
+          id,
+          title,
+          description,
+          url
+        }))
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {
+        type: "application/json"
+      });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "sakura-work-center-config.json";
+      document.body.append(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(link.href);
+      setStatus("Exported");
+    });
+
+    importConfig.addEventListener("click", () => {
+      configFile.click();
+    });
+
+    configFile.addEventListener("change", async () => {
+      const [file] = configFile.files;
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const imported = JSON.parse(text);
+        applyImportedConfig(imported);
+        saveShortcuts();
+        render();
+        setStatus("Imported");
+      } catch (error) {
+        setStatus("Import failed");
+      } finally {
+        configFile.value = "";
+      }
+    });
+
+    form.addEventListener("submit", (event) => {
+      if (event.submitter?.value !== "save") return;
+      event.preventDefault();
+
+      const shortcut = findShortcut(state.activeId);
+      if (!shortcut) return;
+
+      shortcut.title = shortcutTitle.value.trim() || shortcut.title;
+      shortcut.description = shortcutDescription.value.trim();
+      shortcut.url = shortcutUrl.value.trim();
+
+      saveShortcuts();
+      dialog.close();
+      render();
+      setStatus("Saved");
+    });
+
+    clearShortcut.addEventListener("click", () => {
+      shortcutUrl.value = "";
+      shortcutUrl.focus();
+    });
+
+    function render() {
+      categoriesElement.replaceChildren(
+        ...categories.map((category) => renderCategory(category))
+      );
+    }
+
+    function renderCategory(category) {
+      const details = document.createElement("details");
+      details.className = `category ${category.className}`;
+      details.open = true;
+
+      const categoryShortcuts = state.shortcuts.filter(
+        (shortcut) => shortcut.category === category.id
+      );
+      const configured = categoryShortcuts.filter((shortcut) => shortcut.url).length;
+
+      const summary = document.createElement("summary");
+      summary.innerHTML = `
+        <span class="category-kicker"></span>
+        <span class="category-title"></span>
+        <span class="category-count"></span>
+      `;
+      summary.querySelector(".category-title").textContent = category.title;
+      summary.querySelector(".category-count").textContent =
+        `${configured}/${categoryShortcuts.length} set`;
+
+      const grid = document.createElement("div");
+      grid.className = "shortcut-grid";
+      grid.append(
+        ...categoryShortcuts.map((shortcut) => renderShortcut(shortcut))
+      );
+
+      details.append(summary, grid);
+      return details;
+    }
+
+    function renderShortcut(shortcut) {
+      const button = document.createElement("button");
+      const isEmpty = !shortcut.url;
+      button.type = "button";
+      button.className = `shortcut ${shortcut.className}${isEmpty ? " is-empty" : ""}${state.editMode ? " is-editing" : ""}`;
+      button.innerHTML = `
+        <span class="shortcut-icon"><img alt="" loading="lazy"></span>
+        <span class="shortcut-text">
+          <h2></h2>
+          <p></p>
+          <span class="shortcut-state"></span>
+        </span>
+      `;
+
+      button.querySelector("img").src = shortcut.icon;
+      button.querySelector("h2").textContent = shortcut.title;
+      button.querySelector("p").textContent = shortcut.description;
+      button.querySelector(".shortcut-state").textContent = isEmpty ? "Not set" : "Ready";
+
+      button.addEventListener("click", () => {
+        if (state.editMode || isEmpty) {
+          openEditor(shortcut.id);
+          return;
+        }
+        window.open(shortcut.url, "_blank", "noopener,noreferrer");
+      });
+
+      return button;
+    }
+
+    function openEditor(id) {
+      const shortcut = findShortcut(id);
+      if (!shortcut) return;
+
+      state.activeId = id;
+      dialogTitle.textContent = shortcut.title;
+      shortcutTitle.value = shortcut.title;
+      shortcutDescription.value = shortcut.description;
+      shortcutUrl.value = shortcut.url;
+      dialog.showModal();
+      shortcutUrl.focus();
+    }
+
+    function loadShortcuts() {
+      let stored = [];
+      try {
+        stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      } catch (error) {
+        stored = [];
+      }
+
+      const storedById = new Map(
+        Array.isArray(stored)
+          ? stored.filter((item) => item && item.id).map((item) => [item.id, item])
+          : []
+      );
+
+      return defaults.map((shortcut) => {
+        const saved = storedById.get(shortcut.id) || {};
+        return {
+          ...shortcut,
+          title: typeof saved.title === "string" ? saved.title : shortcut.title,
+          description: typeof saved.description === "string" ? saved.description : shortcut.description,
+          url: typeof saved.url === "string" ? saved.url : shortcut.url
+        };
+      });
+    }
+
+    function saveShortcuts() {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(
+          state.shortcuts.map(({ id, title, description, url }) => ({
+            id,
+            title,
+            description,
+            url
+          }))
+        )
+      );
+    }
+
+    function applyImportedConfig(imported) {
+      const items = Array.isArray(imported?.shortcuts)
+        ? imported.shortcuts
+        : Array.isArray(imported)
+          ? imported
+          : [];
+      const importedById = new Map(
+        items.filter((item) => item && item.id).map((item) => [item.id, item])
+      );
+
+      state.shortcuts = state.shortcuts.map((shortcut) => {
+        const saved = importedById.get(shortcut.id);
+        if (!saved) return shortcut;
+
+        return {
+          ...shortcut,
+          title: typeof saved.title === "string" ? saved.title : shortcut.title,
+          description: typeof saved.description === "string" ? saved.description : shortcut.description,
+          url: typeof saved.url === "string" ? saved.url : shortcut.url
+        };
+      });
+    }
+
+    function findShortcut(id) {
+      return state.shortcuts.find((shortcut) => shortcut.id === id);
+    }
+
+    function setStatus(message) {
+      statusText.textContent = message;
+      if (!message) return;
+      window.clearTimeout(setStatus.timer);
+      setStatus.timer = window.setTimeout(() => {
+        statusText.textContent = state.editMode ? "Edit mode" : "";
+      }, 2200);
+    }
+  </script>
+</body>
+</html>
