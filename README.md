@@ -45,3 +45,15 @@ After Pages is enabled, open the GitHub Pages URL and configure shortcuts locall
 ## Local Test
 
 Run `open-local.cmd` or open `index.html` directly.
+
+## Local Online Mode
+
+Run `start-local-server.cmd` to serve the dashboard on this PC at:
+
+```text
+http://127.0.0.1:8787/
+```
+
+Use this URL for the desktop shortcut if you want the work center to behave like a local website. The server binds to `127.0.0.1`, so it is only reachable from this PC.
+
+For LAN access later, change the bind address in `start-local-server.cmd` from `127.0.0.1` to `0.0.0.0`, then allow the chosen port through Windows Firewall.
